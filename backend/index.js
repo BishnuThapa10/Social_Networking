@@ -18,8 +18,26 @@ mongoose.connect('mongodb+srv://bishnuthapaofkalika:first2020@cluster0.jv82y5f.m
     console.log(err)
   })
 
+  // Parse JSON requests
 app.use(express.json()); //middleware to access incoming JSON data
+
+// To parse urlencoded/form-data
+app.use(express.urlencoded({ extended: true }));
+
 
 
 app.use(postRoutes);
+
+app.use((err, req, res, next) => {
+  if (err && err.error && err.error.isJoi) {
+    // This is a Joi validation error
+    return res.status(400).json({
+      message: err.error.details.map(d => d.message).join(", ")
+    });
+  }
+
+  // Other errors
+  console.error(err);
+  res.status(500).json({ message: err.message || "Internal Server Error" });
+});
 

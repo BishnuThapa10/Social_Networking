@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 
-const commentSchmema = new mongoose.Schema({
+const commentSchema = new mongoose.Schema({
       text: {
         type: String,
         required: true
@@ -34,7 +34,7 @@ const postSchema = new mongoose.Schema({
     }
   ] ,
 
-  comments: [commentSchmema],
+  comments: [commentSchema],
 
 }, {timestamps: true});
 
