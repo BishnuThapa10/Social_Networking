@@ -5,7 +5,8 @@ import Post from "../models/Post.js";
 
 export const createPost = async(req, res) => {
   try {
-    const {content, author} = req.body;
+    const {content} = req.body;
+    const author = req.userId;
     await Post.create({
       content,
       author
@@ -20,7 +21,7 @@ export const getPosts = async(req, res) =>{
   try {
     const query = Post.find();
     const data = await query;
-    res.status(201).json({data})
+    res.status(200).json({data})
   } catch (err) {
     res.status(400).json({message: err.message || err})
   }
@@ -31,10 +32,10 @@ export const getPost = async (req, res) => {
   try {
     if(!mongoose.isValidObjectId(id)) return res.status(400).json({message: 'Invalid Id'})
     const data = await Post.findById(id);
-  if(!data) return res.status(400).json({message: 'Data not found'})
-    return res.status(201).json({data})
+  if(!data) return res.status(404).json({message: 'Data not found'})
+    return res.status(200).json({data})
   } catch (err) {
-    res.status(400).json({message: err.message || message})
+    res.status(400).json({message: err?.message })
   }
 }
 
@@ -44,18 +45,21 @@ export const updatePost = async (req, res) => {
     if(!mongoose.isValidObjectId(id)) return res.status(400).json({message: 'Invalid Id'});
     const isExist = await Post.findById(id);
     if(!isExist){
-      res.status(400).json({message: 'Data not found'});
+     return res.status(404).json({message: 'Data not found'});
     }
 
-    isExist.content = req.body?.content || isExist.content;
-    isExist.author = req.body?.author  || isExist.author;
+     if(req.userId !== isExist.author.toString()){
+      return res.status(403).json({message: "Forbidden: you can only update your own post"})
+    }
+
+    isExist.content = req.body?.content ?? isExist.content;
 
     await isExist.save();
 
-    res.status(201).json({message: 'Updated sucessfully'})
+    res.status(200).json({message: 'Updated sucessfully'})
     
   } catch (err) {
-    res.status(400).json({message: err.message || message})
+    res.status(500).json({message: err?.message })
   }
 }
 
@@ -65,11 +69,14 @@ export const removePost = async(req, res) => {
     if(!mongoose.isValidObjectId(id)) return res.status(400).json({message: 'Invalid Id'});
     const isExist = await Post.findById(id);
     if(!isExist){
-      res.status(400).json({message: 'Data not found'})
+      res.status(404).json({message: 'Data not found'})
+    }
+    if(req.userId !== isExist.author.toString()){
+      return res.status(403).json({message: "Forbidden: you can only delete your own post"})
     }
     await isExist.deleteOne();
-    res.status(201).json({message: 'Deleted sucessfully'})
+    res.status(200).json({message: 'Deleted sucessfully'})
   } catch (err) {
-    res.status(400).json({message: err.message || message})
+    res.status(400).json({message: err?.message })
   }
 }

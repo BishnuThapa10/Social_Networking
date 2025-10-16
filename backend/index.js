@@ -1,6 +1,7 @@
 
 import express from 'express';
 import postRoutes from './routes/postRoutes.js';
+import userRoute from './routes/userRoutes.js'
 import mongoose from 'mongoose';
 
 
@@ -27,6 +28,13 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.use(postRoutes);
+app.use(userRoute);
+
+app.use((req, res, next) => {
+  res.status(404).json({
+    message: 'Route not found'
+  })
+})
 
 app.use((err, req, res, next) => {
   if (err && err.error && err.error.isJoi) {
