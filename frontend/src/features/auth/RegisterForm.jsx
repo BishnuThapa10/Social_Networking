@@ -3,9 +3,7 @@ import { Formik } from 'formik'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import * as Yup from 'yup'
-import { useLoginUserMutation } from './authApi.js'
-import { useDispatch } from 'react-redux'
-import { setUser } from '../user/userSlice.JS'
+import { useLoginUserMutation, useRegisterUserMutation } from './authApi.js'
 import toast from 'react-hot-toast'
 
 
@@ -14,13 +12,10 @@ const valSchema = Yup.object({
   password: Yup.string().min(8).max(128).required()
 })
 
-export default function LoginForm() {
-
+export default function RegisterForm() {
   const nav = useNavigate();
-  const [loginUser, { isLoading }] = useLoginUserMutation();
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
   const [passwordShown, setPasswordShown] = useState(false);
-  const dispatch = useDispatch();
-
   return (
     <div>
       <Formik
@@ -31,9 +26,8 @@ export default function LoginForm() {
 
         onSubmit={async (val) => {
           try {
-            const respose = await loginUser(val).unwrap();
-            dispatch(setUser(respose));
-            toast.success('Logged in')
+            await registerUser(val).unwrap();
+            toast.success('Register sucessfully')
             nav(-1);
           } catch (err) {
             toast.error(err.data.message)
@@ -47,13 +41,13 @@ export default function LoginForm() {
             <Card className="mx-auto w-full max-w-[24rem]">
               <CardBody className="flex flex-col gap-4">
                 <Typography variant="h4" color="blue-gray">
-                  Sign In
+                  Sign Up
                 </Typography>
                 <Typography
                   className="mb-3 font-normal"
                   variant="paragraph"
                   color="gray">
-                  Enter your Username and password to Sign In.
+                  Enter your Detail to Sign Up.
                 </Typography>
                 <Typography className="-mb-2" variant="h6">
                   Your Username
@@ -95,18 +89,18 @@ export default function LoginForm() {
               </CardBody>
               <CardFooter className="pt-0">
                 <Button loading={isLoading} type='submit' variant="gradient" fullWidth>
-                  Sign In
+                  Sign Up
                 </Button>
                 <Typography variant="small" className="mt-4 flex justify-center">
-                  Don&apos;t have an account?
+                  Already have an account?
                   <Typography
                     as="a"
                     href=""
                     variant="small"
                     color="blue-gray"
-                    onClick={() => nav(`/register`)}
+                    onClick={() => nav(-1)}
                     className="ml-1 font-bold">
-                    Sign up
+                    Sign In
                   </Typography>
                 </Typography>
               </CardFooter>
