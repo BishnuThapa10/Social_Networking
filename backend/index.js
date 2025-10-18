@@ -3,6 +3,8 @@ import express from 'express';
 import postRoutes from './routes/postRoutes.js';
 import userRoute from './routes/userRoutes.js'
 import mongoose from 'mongoose';
+import cors from 'cors';
+import cookieParser from 'cookie-parser'
 
 
 
@@ -24,6 +26,17 @@ app.use(express.json()); //middleware to access incoming JSON data
 
 // To parse urlencoded/form-data
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser());
+
+app.use(cors({
+  origin:[
+    'http://localhost:5173'
+  ],
+
+  credentials: true,
+  
+}));
 
 
 
