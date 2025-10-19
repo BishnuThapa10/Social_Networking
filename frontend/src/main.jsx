@@ -9,7 +9,11 @@ import { Toaster } from 'react-hot-toast'
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <App />
-    <Toaster/>
+    <Toaster position="top-center"
+      containerStyle={{ zIndex: 999999999 }}
+      toastOptions={{
+        style: { zIndex: 999999999 },
+      }} />
   </Provider>
-  
+
 )

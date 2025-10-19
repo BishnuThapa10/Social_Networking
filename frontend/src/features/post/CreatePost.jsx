@@ -1,13 +1,36 @@
-import { Avatar, Card, CardHeader, Dialog, DialogBody,  DialogHeader, IconButton, Textarea, Typography } from '@material-tailwind/react'
+import { Avatar, Card, CardHeader, Dialog, DialogBody, DialogHeader, IconButton, Textarea, Typography } from '@material-tailwind/react'
 import React, { useState } from 'react'
 import { Input } from '../../components/ui/input.jsx'
-import { FaceSmileIcon, MapPinIcon, PaperClipIcon, PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { FaceSmileIcon, MapPinIcon, PaperClipIcon, PhotoIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Button } from '../../components/ui/button.jsx';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import toast from 'react-hot-toast';
+import { useCreatePostMutation } from './postApi.js';
 
+const supportedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', ''];
+
+const valSchema = Yup.object({
+  content: Yup.string().required().max(280, "Post cannot exceed 280 characters"),
+  image: Yup.mixed().nullable().test('fileType', 'Invalid input type', (val) => {
+    if (!val) return true;
+    return val && supportedFormats.includes(val.type);
+  }).test('fileSize', 'File size is too large', (val) => {
+    if (!val) return true;
+    return val && val.size <= 5 * 1024 * 1024;
+  }),
+});
 
 export default function CreatePost() {
   const [open, setOpen] = useState(false);
   const handelopen = () => setOpen(true);
+  const [preview, setPreview] = useState(null);
+  const [createPost, { isLoading }] = useCreatePostMutation();
+
+  const handelRemoveImage = (setFieldValue) => {
+    setFieldValue("image", null);
+    setPreview(null);
+  };
   return (
     <div>
       <Card className="w-full mx-auto max-w-4xl bg-white rounded-2xl shadow-lg p-3 transition-all duration-300 hover:shadow-xl cursor-pointer border border-gray-200"
@@ -49,45 +72,109 @@ export default function CreatePost() {
           <Typography color="blue-gray" className='pointer-events-none'>
             Create Post
           </Typography>
-          <IconButton
-            size="sm"
-            variant="text"
-            className="!absolute right-3.5 top-3.5"
-            onClick={() => setOpen(false)}
-          >
-            <XMarkIcon className="h-4 w-4 stroke-2" />
-          </IconButton>
+          <XMarkIcon size="sm" className="h-4 w-4 stroke-2 !absolute right-3.5 top-3.5  text-gray-600 hover:text-gray-700 hover:bg-gray-200 cursor-pointer"
+            onClick={() => setOpen(false)} />
+
         </DialogHeader>
         <DialogBody className="space-y-2 p-2 ">
-          <form >
-            <Textarea
-              rows={5}
-              placeholder="What's happening?"
-              className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white !text-black ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
-              labelProps={{
-                className: "hidden",
-              }}
-            />
-            <div className="flex items-center justify-between">
-              <div className="flex gap-3 text-gray-500 dark:text-gray-300">
-                <label className="cursor-pointer hover:text-blue-500 transition">
-                  <PhotoIcon className="h-6 w-6" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                  />
-                </label>
-              </div>
+          <Formik
+            initialValues={{
+              content: "",
+              image: null
+            }}
 
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-1 rounded-full hover:bg-blue-600 transition"
-              >
-                Post
-              </button>
-            </div>
-          </form>
+            onSubmit={async (val, { resetForm }) => {
+              try {
+                const formData = new FormData();
+                formData.append("content", val.content);
+                // formData.append("image", val.image);
+
+                const result = await createPost({ formData }).unwrap();
+                if (result.error) {
+                  const message = error?.data?.message || error?.error || "Something went wrong";
+                  toast.error(message)
+                }
+                resetForm();
+                setPreview(null);
+                setOpen(false);
+                toast.success("Post Created");
+              } catch (err) {
+                const message = err?.data?.message || err?.error || "Something went wrong";
+                toast.error(message)
+              }
+            }}
+
+            validationSchema={valSchema}
+
+          >
+            {({ handleChange, handleSubmit, setFieldValue, touched, errors }) => (
+              <form onSubmit={handleSubmit}>
+                <div>
+                  <Textarea
+                    rows={5}
+                    name="content"
+                    onChange={handleChange}
+                    placeholder="What's happening?"
+                    className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white !text-black ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
+                    labelProps={{
+                      className: "hidden",
+                    }}
+                  />
+                  {touched.content && errors.content && <p className='text-red-500'>{errors.content}</p>}
+                </div>
+
+                {preview && (
+                  <div className="relative py-1">
+                    <img
+                      src={preview}
+                      alt="Preview"
+                      className="max-h-40 w-full object-contain rounded-lg border border-gray-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handelRemoveImage(setFieldValue)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-3 text-gray-500 dark:text-gray-300">
+                    <label className="cursor-pointer hover:text-blue-500 transition">
+                      <PhotoIcon className="h-6 w-6" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        name='image'
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          setFieldValue('image', file);
+                          if (file) {
+                            setPreview(URL.createObjectURL(file));
+                          } else {
+                            setPreview(null);
+                          }
+
+                        }}
+                      />
+                    </label>
+                    {touched.image && errors.image && <p className='text-red-500'>{errors.image}</p>}
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-1 rounded-full hover:bg-blue-600 transition"
+                  >
+                    Post
+                  </Button>
+                </div>
+              </form>
+            )}
+          </Formik>
+
 
         </DialogBody>
       </Dialog>
