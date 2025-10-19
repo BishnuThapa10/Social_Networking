@@ -20,8 +20,8 @@ export const createPost = async(req, res) => {
 export const getPosts = async(req, res) =>{
   try {
     const query = Post.find();
-    const data = await query;
-    res.status(200).json({data})
+    const results = await query;
+    res.status(200).json({results})
   } catch (err) {
     res.status(400).json({message: err.message || err})
   }
@@ -31,9 +31,9 @@ export const getPost = async (req, res) => {
   const {id} = req.params;
   try {
     if(!mongoose.isValidObjectId(id)) return res.status(400).json({message: 'Invalid Id'})
-    const data = await Post.findById(id);
-  if(!data) return res.status(404).json({message: 'Data not found'})
-    return res.status(200).json({data})
+    const result = await Post.findById(id);
+  if(!result) return res.status(404).json({message: 'Data not found'})
+    return res.status(200).json({result})
   } catch (err) {
     res.status(400).json({message: err?.message })
   }
