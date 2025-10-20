@@ -6,6 +6,7 @@ import Home from "./features/home/Home.jsx";
 import RegisterForm from "./features/auth/RegisterForm.jsx";
 import PublicRoute from "./components/PublicRoute.jsx";
 import ProctedRoute from "./components/ProctedRoute.jsx";
+import MyProfile from "./features/profile/MyProfile.jsx";
 
 
 export default function App() {
@@ -22,6 +23,11 @@ export default function App() {
              {
           index: true,
           element: <Home />
+        },
+
+        {
+          path: 'profile',
+          element: <MyProfile/>
         },
           ]
         },

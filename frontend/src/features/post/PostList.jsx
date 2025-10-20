@@ -13,7 +13,7 @@ export default function PostList({ posts }) {
   return (
     <div className='grid grid-cols-1 gap-4 p-4' >
       {posts.map((post) => {
-        return <Card key={post._id} className="w-full mx-auto max-w-4xl bg-gray-100 rounded-2xl shadow-md p-3 transition-shadow hover:shadow-lg">
+        return <Card key={post._id} className="w-full mx-auto max-w-4xl rounded-2xl shadow-md p-3 transition-shadow hover:shadow-lg">
           <CardHeader
             color="transparent"
             floated={false}

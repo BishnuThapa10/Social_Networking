@@ -1,4 +1,4 @@
-import { Avatar, Card, CardHeader, Dialog, DialogBody, DialogHeader, IconButton, Textarea, Typography } from '@material-tailwind/react'
+import { Avatar, Card, CardHeader, Dialog, DialogBody, DialogHeader, Textarea, Typography } from '@material-tailwind/react'
 import React, { useState } from 'react'
 import { Input } from '../../components/ui/input.jsx'
 import { FaceSmileIcon, MapPinIcon, PaperClipIcon, PhotoIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -60,7 +60,7 @@ export default function CreatePost() {
             <MapPinIcon className='w-5 h-5 text-gray-500' />
             <FaceSmileIcon className='w-5 h-5 text-gray-500' />
           </div>
-          <Button variant="outline" size="sm" className="rounded-lg pointer-events-none">
+          <Button variant="outline" size="sm" className="rounded-lg bg-[#5285F2] text-white pointer-events-none">
             Post
           </Button>
         </div>
@@ -166,7 +166,8 @@ export default function CreatePost() {
 
                   <Button
                     type="submit"
-                    className="bg-blue-500 text-white px-4 py-1 rounded-full hover:bg-blue-600 transition"
+                    size='sm'
+                    className="bg-blue-500 text-white px-4 py-1 rounded-lg hover:bg-blue-600 transition"
                   >
                     Post
                   </Button>

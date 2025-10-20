@@ -9,7 +9,7 @@ import { removeUser } from '../features/user/userSlice.JS';
 export default function Header() {
   const { user } = useSelector((state) => state.userSlice);
   return (
-    <Navbar className="mx-auto p-2 lg:rounded-full lg:pl-6 mb-2">
+    <Navbar className="mx-auto p-2 lg:rounded-full lg:pl-6 sticky top-0 z-50 ">
       <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
         <div>
         <Typography
