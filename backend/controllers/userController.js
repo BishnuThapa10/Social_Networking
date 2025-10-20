@@ -80,3 +80,13 @@ export const getUser = async (req, res) => {
     return res.status(400).json({message: err?.message })
   }
 }
+
+export const getProfile = async (req, res) => {
+  try {
+    const isExist = await User.findById(req.userId).select('username bio profilePicture');
+    if(!isExist) return res.status(404).json({message: 'User not found'});
+    return res.status(200).json(isExist)
+  } catch (err) {
+    return res.status(400).json({message: err?.message })
+  }
+}
