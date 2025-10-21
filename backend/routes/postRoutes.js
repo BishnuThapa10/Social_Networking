@@ -2,9 +2,9 @@
 import express from 'express';
 import { createPost, getPost, getPosts, removePost, updatePost } from '../controllers/postController.js';
 import { postSchema, validatorJoi } from '../utils/validator.js';
-import { upload } from '../utils/multer.js';
 import { methodNotAllowed } from '../utils/methodNotAllowed.js';
 import { checkUser } from '../middlewares/checkAuth.js';
+import { upload } from '../middlewares/parserMulter.js';
 
 
 

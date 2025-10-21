@@ -18,8 +18,14 @@ const userSchema = new mongoose.Schema({
   },
 
   profilePicture: {
-    type: String,
-    default: null
+    url: {
+      type: String,
+      default: null
+    },
+    public_id: {
+      type: String,
+      default: null
+    }
   },
 
   bio: {
@@ -28,7 +34,7 @@ const userSchema = new mongoose.Schema({
     maxLength: 300
   }
 
-}, {timestamps: true});
+}, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
 export default User;

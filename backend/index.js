@@ -4,15 +4,16 @@ import postRoutes from './routes/postRoutes.js';
 import userRoute from './routes/userRoutes.js'
 import mongoose from 'mongoose';
 import cors from 'cors';
-import cookieParser from 'cookie-parser'
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
 
-
+dotenv.config();
 
 
 const app = express(); //storing the object that we get while calling express js
-const port = 5000;
+const port = process.env.PORT || 5000;
 
-mongoose.connect('mongodb+srv://bishnuthapaofkalika:first2020@cluster0.jv82y5f.mongodb.net/Social_Networking')
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`)
   .then(() => {
     app.listen(port, () => {
     console.log("database connected and server is running")

@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { upload } from '../middlewares/multer.js';
+import cloudinary from '../utils/cloudinaryConfig.js';
 
 export const registerUser = async (req, res) => {
   try {
@@ -26,7 +28,7 @@ export const loginUser = async (req, res) => {
     if(!isExist) return res.status(404).json({message: 'User not found'});
     const chechPasss = bcrypt.compareSync(password, isExist.password);
     if(!chechPasss) return res.status(400).json({message: 'Invalid credentials'});
-    const token = jwt.sign({ id:isExist._id }, 'secret');
+    const token = jwt.sign({ id:isExist._id }, `${process.env.JWT_SECRET}`);
 
     // res.cookie('jwt', token, {
     //   httpOnly: true,
@@ -42,6 +44,7 @@ export const loginUser = async (req, res) => {
 }
 
 export const updateUser = async (req, res) => {
+  let uploadedImage = null;
   try {
     const userId = req.params.id; //profile id from url
 
@@ -53,16 +56,34 @@ export const updateUser = async (req, res) => {
       return res.status(403).json({message: "Forbidden: not your profile"})
     }
 
-    const isExist = await User.findById(userId);
-    if(!isExist) {
+    const user = await User.findById(userId);
+    if(!user) {
       return res.status(404).json({message: 'User not found'})
     }
 
-    isExist.username = req.body?.username || isExist.username;
-    isExist.bio = req.body?.bio || isExist.bio;
-    await isExist.save();
+    let oldImage = null;
+
+    if(req.file) {
+      uploadedImage =await upload("profiles").uploadToCloudinary(req.file.buffer, req.file.originalname);
+      
+      oldImage = user.profilePicture.public_id;
+
+      user.profilePicture = {
+      url: uploadedImage.secure_url,
+      public_id: uploadedImage.public_id
+    };
+    }
+
+    user.username = req.body?.username || user.username;
+    user.bio = req.body?.bio || user.bio;
+
+    await user.save();
+     if(req.file && oldImage) {
+      await cloudinary.uploader.destroy(oldImage);
+     }
     return res.status(200).json({message: 'Updated sucessfully'});
   } catch (err) {
+    if(uploadedImage?.public_id) await cloudinary.uploader.destroy(uploadedImage.public_id);
     return res.status(400).json({message: err?.message })
   }
 }

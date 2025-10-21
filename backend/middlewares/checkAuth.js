@@ -13,7 +13,7 @@ const token = req.headers.authorization;
   // console.log(authHeader);
 
   try {
-    const decoded = jwt.verify(token, 'secret'); // verify checks signature
+    const decoded = jwt.verify(token, `${process.env.JWT_SECRET}`); // verify checks signature
     req.userId = decoded.id; // attach userId to request
     next();
   } catch (error) {
