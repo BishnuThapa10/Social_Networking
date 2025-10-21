@@ -11,7 +11,7 @@ import { upload } from '../middlewares/parserMulter.js';
 const router = express.Router();
 
 
-router.route('/posts').get(getPosts).post(checkUser, upload.any(), validatorJoi.body(postSchema), createPost).all(methodNotAllowed);
-router.route('/posts/:id').get(getPost).patch(checkUser, upload.any(), validatorJoi.body(postSchema), updatePost).delete(checkUser, removePost).all(methodNotAllowed);
+router.route('/posts').get(checkUser, getPosts).post(checkUser, upload.any(), validatorJoi.body(postSchema), createPost).all(methodNotAllowed);
+router.route('/posts/:id').get(checkUser, getPost).patch(checkUser, upload.any(), validatorJoi.body(postSchema), updatePost).delete(checkUser, removePost).all(methodNotAllowed);
 
 export default router;

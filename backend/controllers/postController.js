@@ -19,7 +19,15 @@ export const createPost = async(req, res) => {
 
 export const getPosts = async(req, res) =>{
   try {
-    const query = Post.find();
+    // Check query param
+    const isMine = req.query.mine === "true";
+    // Filter: if ?mine=true, show only user's posts
+    const filter = isMine ? { author: req.userId } : {};
+
+    const query = Post.find(filter)
+      .populate("author", "username profilePicture")
+      // .populate("comments.author", "username")
+      .sort({ createdAt: -1 });;
     const results = await query;
     res.status(200).json({results})
   } catch (err) {
