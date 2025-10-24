@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router';
 import SearchInput from '../features/search/searchInput.jsx';
 import { removeUser } from '../features/user/userSlice.JS';
+import { useGetProfileQuery } from '../features/profile/profileApi.js';
 
 export default function Header() {
   const { user } = useSelector((state) => state.userSlice);
@@ -12,27 +13,26 @@ export default function Header() {
     <Navbar className="mx-auto p-2 lg:rounded-full lg:pl-6 sticky top-0 z-50 ">
       <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
         <div>
-        <Typography
-          as="a"
-          href="#"
-          className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
-        >
-          Material Tailwind
-        </Typography>
+          <Typography
+            as="a"
+            className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
+          >
+            Social Networking
+          </Typography>
         </div>
 
         <div>
-        <SearchInput />
+          <SearchInput />
         </div>
 
         <div className='flex gap-2'>
-         <IconButton variant="text" color="blue-gray">
-          <BellIcon className="h-4 w-4" />
-        </IconButton>
+          <IconButton variant="text" color="blue-gray">
+            <BellIcon className="h-4 w-4" />
+          </IconButton>
 
-        {user ? <ProfileMenu user={user} /> : <Button size="sm" variant="text">
-          <NavLink to={'/login'}>Log In</NavLink>
-        </Button>}
+          {user ? <ProfileMenu user={user} /> : <Button size="sm" variant="text">
+            <NavLink to={'/login'}>Log In</NavLink>
+          </Button>}
         </div>
 
       </div>
@@ -61,6 +61,12 @@ function ProfileMenu({ user }) {
   const closeMenu = () => setIsMenuOpen(false);
   const dispath = useDispatch();
   const nav = useNavigate();
+  const { isLoading: loadingProfile, data: profile, error: profileError } = useGetProfileQuery(undefined, {
+    refetchOnMountOrArgChange: true, // auto refetch on mount/sign-in
+  });
+
+  if (loadingProfile) return <h1>Loading...</h1>
+  if (profileError) return <h1 className='text-red-500'>{profileError.data.message}</h1>
 
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
@@ -73,10 +79,11 @@ function ProfileMenu({ user }) {
           <Avatar
             variant="circular"
             size="sm"
-            alt="tania andrew"
-            className="border border-gray-900 p-0.5"
-            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+            alt={profile.username ? profile.username.charAt(0).toUpperCase() : "U"}
+            className="border border-gray-900 p-0.5 flex items-center justify-center"
+            src={profile.profilePicture?.url || undefined}
           />
+          
           <ChevronDownIcon
             strokeWidth={2.5}
             className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""

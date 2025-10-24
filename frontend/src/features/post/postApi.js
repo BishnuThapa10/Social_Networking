@@ -24,7 +24,18 @@ const postApi = mainApi.injectEndpoints({
       invalidatesTags: ['Posts','ID']
     }),
 
+    OwnerPosts: builder.query({
+      query: () => ({
+        url:'/posts',
+        params:{
+          mine: true
+        },
+        method:'GET'
+      }),
+      providesTags: ['Posts']
+    }),
+
   })
 })
 
-export const {useGetPostsQuery, useCreatePostMutation} = postApi;
+export const {useGetPostsQuery, useCreatePostMutation, useOwnerPostsQuery} = postApi;

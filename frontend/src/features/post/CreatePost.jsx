@@ -1,4 +1,4 @@
-import { Avatar, Card, CardHeader, Dialog, DialogBody, DialogHeader, Textarea, Typography } from '@material-tailwind/react'
+// import { Dialog, DialogBody, DialogHeader, Textarea, Typography } from '@material-tailwind/react'
 import React, { useState } from 'react'
 import { Input } from '../../components/ui/input.jsx'
 import { FaceSmileIcon, MapPinIcon, PaperClipIcon, PhotoIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -7,6 +7,11 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 import { useCreatePostMutation } from './postApi.js';
+import { Card, CardHeader } from '../../components/ui/card.jsx';
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar.jsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog.jsx';
+import { Textarea } from '../../components/ui/textarea.jsx';
+import { Loader2Icon } from 'lucide-react';
 
 const supportedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', ''];
 
@@ -21,7 +26,7 @@ const valSchema = Yup.object({
   }),
 });
 
-export default function CreatePost() {
+export default function CreatePost({profile}) {
   const [open, setOpen] = useState(false);
   const handelopen = () => setOpen(true);
   const [preview, setPreview] = useState(null);
@@ -35,17 +40,11 @@ export default function CreatePost() {
     <div>
       <Card className="w-full mx-auto max-w-4xl bg-white rounded-2xl shadow-lg p-3 transition-all duration-300 hover:shadow-xl cursor-pointer border border-gray-200"
         onClick={() => handelopen()}>
-        <CardHeader
-          color="transparent"
-          floated={false}
-          shadow={false}
-          className="mx-0 flex items-center gap-4 p-0 mt-0">
-          <Avatar
-            size="sm"
-            variant="circular"
-            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
-            alt="tania andrew"
-          />
+        <CardHeader className="mx-0 flex flex-row items-center gap-4 p-0 mt-0 justify-center space-y-0">
+          <Avatar key={profile.id} className="h-9 w-9 ">
+            <AvatarImage src={profile.profilePicture.url} alt={profile.username} />
+            <AvatarFallback>{profile.username ? profile.username[0].toUpperCase() : "U"}</AvatarFallback>
+          </Avatar>
           <Input
             placeholder="What's on your mind?"
             name="design"
@@ -67,16 +66,16 @@ export default function CreatePost() {
       </Card>
 
       {/* Create post from */}
-      <Dialog size="sm" open={open} handler={() => setOpen(false)} className="p-2">
-        <DialogHeader className='p-2 flex items-center'>
-          <Typography color="blue-gray" className='pointer-events-none'>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md p-2  gap-2">
+        <DialogHeader className='flex items-center space-y-0 justify-center'>
+          <DialogTitle className=' text-md text-blue-gray-500 font-semibold pointer-events-none'>
             Create Post
-          </Typography>
-          <XMarkIcon size="sm" className="h-4 w-4 stroke-2 !absolute right-3.5 top-3.5  text-gray-600 hover:text-gray-700 hover:bg-gray-200 cursor-pointer"
-            onClick={() => setOpen(false)} />
+          </DialogTitle>
+          {/* <XMarkIcon size="sm" className="h-4 w-4 stroke-2 !absolute right-3.5 top-3.5  text-gray-600 hover:text-gray-700 hover:bg-gray-200 cursor-pointer"
+            onClick={() => setOpen(false)} /> */}
 
         </DialogHeader>
-        <DialogBody className="space-y-2 p-2 ">
           <Formik
             initialValues={{
               content: "",
@@ -87,7 +86,7 @@ export default function CreatePost() {
               try {
                 const formData = new FormData();
                 formData.append("content", val.content);
-                // formData.append("image", val.image);
+                formData.append("image", val.image);
 
                 const result = await createPost({ formData }).unwrap();
                 if (result.error) {
@@ -108,17 +107,14 @@ export default function CreatePost() {
 
           >
             {({ handleChange, handleSubmit, setFieldValue, touched, errors }) => (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className='space-y-1'>
                 <div>
                   <Textarea
                     rows={5}
                     name="content"
                     onChange={handleChange}
                     placeholder="What's happening?"
-                    className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white !text-black ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
-                    labelProps={{
-                      className: "hidden",
-                    }}
+                    className="resize-none border-gray-300 focus:border-primary focus-visible:ring-0"
                   />
                   {touched.content && errors.content && <p className='text-red-500'>{errors.content}</p>}
                 </div>
@@ -164,20 +160,23 @@ export default function CreatePost() {
                     {touched.image && errors.image && <p className='text-red-500'>{errors.image}</p>}
                   </div>
 
-                  <Button
+                  {isLoading ? <Button size='sm' className="bg-blue-500 text-white px-4 py-1 rounded-lg" disabled>
+                  <Loader2Icon className="animate-spin" />
+                  Please wait
+                </Button> : <Button
                     type="submit"
                     size='sm'
                     className="bg-blue-500 text-white px-4 py-1 rounded-lg hover:bg-blue-600 transition"
                   >
                     Post
-                  </Button>
+                  </Button>}
+                  
                 </div>
               </form>
             )}
           </Formik>
 
-
-        </DialogBody>
+        </DialogContent>
       </Dialog>
     </div>
   )

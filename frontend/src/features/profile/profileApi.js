@@ -6,7 +6,7 @@ const profileApi = mainApi.injectEndpoints({
 
     getProfile: builder.query({
       query: () => ({
-        url:'/me',
+        url:'/profile',
         method:'GET'
       }),
       providesTags: ['Users']

@@ -2,15 +2,20 @@ import React from 'react'
 import ProfileHeader from './ProfileHeader.jsx'
 import { Card, CardContent, CardHeader } from '../../components/ui/card.jsx'
 import PostList from '../post/PostList.jsx'
-import { useGetPostsQuery } from '../post/postApi.js';
+import { useOwnerPostsQuery } from '../post/postApi.js';
+import { useGetProfileQuery } from './profileApi.js';
 
 export default function MyProfile() {
-   const {isLoading: loadingPosts, error: PostsError, data: posts} = useGetPostsQuery();
-   console.log(posts);
+   const {isLoading: loadingPosts, error: PostsError, data: posts} = useOwnerPostsQuery();
+   const {isLoading : loadingProfile, data: profile, error: profileError} = useGetProfileQuery();
+   if(loadingProfile) return <h1>Loading...</h1>
+  if(profileError) return <h1 className='text-red-500'>{profileError.data.message}</h1>
+  const postCount =  posts?.results?.length || 0 ;
+  const userProfile = {...profile, postCount}
   return (
     <div className='bg-gray-100 p-2 min-h-screen w-full space-y-2'>
 
-      <ProfileHeader isOwner={true} />
+      <ProfileHeader profile={userProfile} isOwner={true} />
 
       <Card className="max-w-3xl mx-auto shadow-lg rounded-2xl">
         <CardHeader className="px-4 pt-4 pb-2 shadow-none">
@@ -29,7 +34,7 @@ export default function MyProfile() {
                   Failed to load posts
                 </p>
               </div>
-            ) : posts && posts.results && posts.results.length > 0 ? <PostList posts={posts.results}/>: (
+            ) : posts && posts.results && posts.results.length > 0 ? <PostList posts={posts.results} isOwner={true}/>: (
               <p color="gray" className="text-center py-6">
                 No posts found
               </p>

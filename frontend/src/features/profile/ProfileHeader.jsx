@@ -2,13 +2,8 @@ import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar.jsx'
 import { Button } from '../../components/ui/button.jsx';
 
-export default function ProfileHeader({ isOwner }) {
+export default function ProfileHeader({profile, isOwner }) {
   const user = {
-    username: "bishnu_thapa",
-    displayName: "Bishnu Thapa",
-    profilePic: "https://avatars.githubusercontent.com/u/1?v=4",
-    coverPhoto: "https://images.unsplash.com/photo-1503264116251-35a269479413",
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vel ligula scelerisque, finibus odio a, dignissim libero. Aenean nec velit vitae sem faucibus aliquet. Suspendisse potenti. Integer vitae purus ut magna commodo.",
     posts: 120,
     followers: 840,
     following: 305,
@@ -21,14 +16,14 @@ export default function ProfileHeader({ isOwner }) {
         <div className="flex justify-between items-start flex-wrap gap-4">
           <div className='flex items-center gap-3'>
             <Avatar size='lg'>
-              <AvatarImage src={user.profilePic} alt={user.username} />
+              <AvatarImage src={profile.profilePicture.url} alt={profile.username} />
               <AvatarFallback>
-                {user.username ? user.username[0].toUpperCase() : "U"}
+                {profile.username ? profile.username[0].toUpperCase() : "U"}
               </AvatarFallback>
             </Avatar>
 
             <p className="text-sm text-gray-900">
-              @{user.username}
+              @{profile.username}
             </p>
           </div>
           {isOwner ? (
@@ -38,15 +33,15 @@ export default function ProfileHeader({ isOwner }) {
           )}
         </div>
         {/* Bio */}
-        {user.bio && (
+        {profile.bio && (
           <p className="mt-3 text-gray-700 text-justify text-sm ">
-            {user.bio}
+            {profile.bio}
           </p>
         )}
         <div className="flex space-x-6 mt-4 text-sm text-gray-600">
           <span>
             <strong className="text-gray-800">
-              {user.posts}
+              {profile.postCount}
             </strong>{" "}
             Posts
           </span>
