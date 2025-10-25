@@ -52,7 +52,7 @@ export default function PostList({ posts, isOwner}) {
                 </div>
 
                 {/* Action Button */}
-                {isOwner ? <EditAndDeletePost/> :(<Button
+                {isOwner ? <EditAndDeletePost id={post._id}/> :(<Button
                   variant="ghost"
                   size="icon"
                   className="rounded-full"

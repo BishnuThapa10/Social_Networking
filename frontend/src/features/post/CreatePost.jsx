@@ -4,7 +4,6 @@ import { Input } from '../../components/ui/input.jsx'
 import { FaceSmileIcon, MapPinIcon, PaperClipIcon, PhotoIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Button } from '../../components/ui/button.jsx';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 import { useCreatePostMutation } from './postApi.js';
 import { Card, CardHeader } from '../../components/ui/card.jsx';
@@ -12,19 +11,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar.
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog.jsx';
 import { Textarea } from '../../components/ui/textarea.jsx';
 import { Loader2Icon } from 'lucide-react';
+import { valSchema } from './validation.js';
 
-const supportedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', ''];
-
-const valSchema = Yup.object({
-  content: Yup.string().required().max(280, "Post cannot exceed 280 characters"),
-  image: Yup.mixed().nullable().test('fileType', 'Invalid input type', (val) => {
-    if (!val) return true;
-    return val && supportedFormats.includes(val.type);
-  }).test('fileSize', 'File size is too large', (val) => {
-    if (!val) return true;
-    return val && val.size <= 5 * 1024 * 1024;
-  }),
-});
 
 export default function CreatePost({profile}) {
   const [open, setOpen] = useState(false);

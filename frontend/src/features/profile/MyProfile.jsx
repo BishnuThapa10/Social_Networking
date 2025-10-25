@@ -6,7 +6,9 @@ import { useOwnerPostsQuery } from '../post/postApi.js';
 import { useGetProfileQuery } from './profileApi.js';
 
 export default function MyProfile() {
-   const {isLoading: loadingPosts, error: PostsError, data: posts} = useOwnerPostsQuery();
+   const {isLoading: loadingPosts, error: PostsError, data: posts} = useOwnerPostsQuery(undefined, {
+    refetchOnMountOrArgChange: true, // auto refetch on mount/sign-in
+  });
    const {isLoading : loadingProfile, data: profile, error: profileError} = useGetProfileQuery();
    if(loadingProfile) return <h1>Loading...</h1>
   if(profileError) return <h1 className='text-red-500'>{profileError.data.message}</h1>

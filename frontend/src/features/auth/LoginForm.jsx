@@ -33,7 +33,7 @@ export default function LoginForm() {
           try {
             const respose = await loginUser(val).unwrap();
             dispatch(setUser(respose));
-            dispatch(api.util.invalidateTags(['Users']));
+            dispatch(api.util.invalidateTags(['Users','Posts']));
             toast.success('Logged in')
             nav(-1);
           } catch (err) {
