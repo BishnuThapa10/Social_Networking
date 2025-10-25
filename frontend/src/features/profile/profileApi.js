@@ -12,16 +12,24 @@ const profileApi = mainApi.injectEndpoints({
       providesTags: ['Users']
     }),
 
-    // createPost: builder.mutation({
-    //   query: ({formData}) => ({
-    //     url: '/posts',
-    //     body: formData,
-    //     method:'POST'
-    //   }),
-    //   invalidatesTags: ['Posts','ID']
-    // }),
+    getUser: builder.query({
+      query: (id) => ({
+        url:`/users/${id}`,
+        method:'GET'
+      }),
+      providesTags: ['Users']
+    }),
+
+    updateProfile: builder.mutation({
+      query: ({id, formData}) => ({
+        url: `/users/${id}`,
+        body: formData,
+        method:'PATCH'
+      }),
+      invalidatesTags: ['Users','ID']
+    }),
 
   })
 })
 
-export const {useGetProfileQuery} = profileApi;
+export const {useGetProfileQuery, useGetUserQuery, useUpdateProfileMutation} = profileApi;

@@ -7,6 +7,7 @@ import RegisterForm from "./features/auth/RegisterForm.jsx";
 import PublicRoute from "./components/PublicRoute.jsx";
 import ProctedRoute from "./components/ProctedRoute.jsx";
 import MyProfile from "./features/profile/MyProfile.jsx";
+import UpdateProfile from "./features/profile/UpdateProfile.jsx";
 
 
 export default function App() {
@@ -29,6 +30,10 @@ export default function App() {
           path: 'profile',
           element: <MyProfile/>
         },
+        {
+          path:'profile-update/:id',
+          element: <UpdateProfile/>
+        }
           ]
         },
        

@@ -1,10 +1,11 @@
 import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar.jsx'
 import { Button } from '../../components/ui/button.jsx';
+import { useNavigate } from 'react-router';
 
 export default function ProfileHeader({profile, isOwner }) {
+  const nav = useNavigate();
   const user = {
-    posts: 120,
     followers: 840,
     following: 305,
   };
@@ -27,9 +28,15 @@ export default function ProfileHeader({profile, isOwner }) {
             </p>
           </div>
           {isOwner ? (
-            <Button variant="default" size='sm' className="bg-blue-500 text-white px-4 py-1 rounded-lg hover:bg-blue-700 transition">Edit Profile</Button>
+            <Button
+            onClick={() => nav(`/profile-update/${profile._id}`)}
+            variant="default"
+            size='sm'
+            className="bg-blue-500 text-white px-4 py-1 rounded-lg hover:bg-blue-700 transition">Edit Profile</Button>
           ) : (
-            <Button size='sm' className="bg-blue-500 text-white px-4 py-1 rounded-lg hover:bg-blue-600 transition">Follow</Button>
+            <Button
+             size='sm' 
+             className="bg-blue-500 text-white px-4 py-1 rounded-lg hover:bg-blue-600 transition">Follow</Button>
           )}
         </div>
         {/* Bio */}

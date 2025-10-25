@@ -15,7 +15,7 @@ export default function EditAndDeletePost({ id }) {
   const [preview, setPreview] = useState(null);
   const [getPost, { isFetching, error, data: post }] = useLazyGetPostQuery();
   const [updatePost, { isLoading: isUpdating }] = useUpdatePostMutation();
-  const [deletePost, {isLoading: idDeleting}] = useDeletePostMutation()
+  const [deletePost, {isLoading: isDeleting}] = useDeletePostMutation()
 
   useEffect(() => {
     if (openEdit) {
@@ -63,8 +63,8 @@ export default function EditAndDeletePost({ id }) {
           <DropdownMenuItem onClick={() => setOpenEdit(true)}>
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handelDelete} className="text-red-400 focus:text-red-600">
-           {idDeleting ? "Deleting..." : "Delete"}
+          <DropdownMenuItem onClick={handelDelete} disabled={isDeleting} className="text-red-400 focus:text-red-600">
+           {isDeleting ? "Deleting..." : "Delete"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

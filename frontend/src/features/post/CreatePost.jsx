@@ -74,7 +74,9 @@ export default function CreatePost({profile}) {
               try {
                 const formData = new FormData();
                 formData.append("content", val.content);
-                formData.append("image", val.image);
+                if(val.image){
+                  formData.append("image", val.image);
+                }
 
                 const result = await createPost({ formData }).unwrap();
                 if (result.error) {
