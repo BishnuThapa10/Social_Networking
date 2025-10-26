@@ -94,7 +94,7 @@ export const getUser = async (req, res) => {
     if (!mongoose.isValidObjectId(userId)) {
       return res.status(400).json({ message: 'Invalid Id' });
     }
-    const isExist = await User.findById(userId).select('username bio profilePicture -_id');
+    const isExist = await User.findById(userId).select('username bio profilePicture');
     if (!isExist) return res.status(404).json({ message: 'User not found' });
     return res.status(200).json(isExist)
   } catch (err) {

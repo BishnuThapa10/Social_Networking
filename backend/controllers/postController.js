@@ -32,12 +32,23 @@ export const createPost = async (req, res) => {
 
 export const getPosts = async (req, res) => {
   try {
-    // Check query param
-    const isMine = req.query.mine === "true";
-    // Filter: if ?mine=true, show only user's posts
-    const filter = isMine ? { author: req.userId } : {};
+    const {mine, authorId} = req.query;
+    
+    let filter = {};
 
-    const query = Post.find(filter)
+    //If ?mine=true → show logged-in user's posts
+    if (mine === "true" && req.userId) {
+      filter.author = req.userId;
+    }
+    //Else if ?authorId=... → show posts by that author
+    else if (authorId) {
+      if (!mongoose.isValidObjectId(authorId)) {
+        return res.status(400).json({ message: "Invalid author ID" });
+      }
+      filter.author = authorId;
+    }
+
+    const query = Post.find(filter,"-likes -comments")
       .populate("author", "username profilePicture")
       // .populate("comments.author", "username")
       .sort({ createdAt: -1 });

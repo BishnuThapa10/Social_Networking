@@ -35,7 +35,6 @@ export const updatePostSchema = Joi.object({
 export const userSchema = Joi.object({
   username: Joi.string().min(5).max(50).trim().required(),
   password: Joi.string().min(8).max(128).required(),
-  // profilePicture: Joi.string().uri().allow(null, ""),
   bio: Joi.string().max(300).allow(""),
   profilePicture:Joi.object({
     url: Joi.string().uri().allow(null, ''),
