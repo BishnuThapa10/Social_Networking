@@ -1,32 +1,31 @@
-import { Bars3Icon, BellIcon, ChevronDownIcon, PowerIcon, UserCircleIcon, XMarkIcon } from '@heroicons/react/16/solid';
+import { BellIcon, ChevronDownIcon, MagnifyingGlassCircleIcon, MagnifyingGlassIcon, PowerIcon, UserCircleIcon } from '@heroicons/react/16/solid';
 import { Avatar, Button, IconButton, Menu, MenuHandler, MenuItem, MenuList, Navbar, Typography } from '@material-tailwind/react'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router';
-import SearchInput from '../features/search/searchInput.jsx';
 import { removeUser } from '../features/user/userSlice.JS';
 import { useGetProfileQuery } from '../features/profile/profileApi.js';
 
 export default function Header() {
   const { user } = useSelector((state) => state.userSlice);
-  const [openMenu, setOpenMenu] = useState(false);
   return (
-    <Navbar className="mx-auto p-2 lg:rounded-full lg:pl-6 sticky top-0 z-50 ">
+    <Navbar className="mx-auto p-1 lg:rounded-full lg:pl-6 sticky top-0 z-50 ">
       <div className=" flex items-center justify-between text-blue-gray-900">
         <div>
           <Typography
             as="a"
-            className="mr-4 ml-2 cursor-pointer py-1.5 font-medium text-md"
+            className="mr-4 ml-2 cursor-pointer py-1.5 font-medium text-xs sm:text-base"
           >
             Social Networking
           </Typography>
         </div>
 
-        <div className='hidden md:block'>
-          <SearchInput />
-        </div>
-
-        <div className='hidden md:flex gap-2 items-center'>
+        <div className='flex gap-2 items-center'>
+          <NavLink to="/search">
+            <IconButton variant="text" color="blue-gray">
+              <MagnifyingGlassIcon className="h-4 w-4" />
+            </IconButton>
+          </NavLink>
           <IconButton variant="text" color="blue-gray">
             <BellIcon className="h-4 w-4" />
           </IconButton>
@@ -35,41 +34,8 @@ export default function Header() {
             <NavLink to={'/login'}>Log In</NavLink>
           </Button>}
         </div>
-        {/* Mobile Menu Button */}
-        <IconButton
-          variant='text'
-          color='blue-gray'
-          className="md:hidden"
-          onClick={() => setOpenMenu(!openMenu)}>
 
-           {openMenu ? (
-            <XMarkIcon className="h-5 w-5" />
-          ) : (
-            <Bars3Icon className="h-5 w-5" />
-          )}
-        </IconButton>
       </div>
-
-      {/* Mobile Menu Dropdown */}
-      {openMenu && (
-        <div className='flex  gap-2 items-center justify-end md:hidden'>
-          <div className='w-3/4 max-w-sm px-2'>
-           <SearchInput/>
-          </div>
-
-           <IconButton variant="text" color="blue-gray">
-            <BellIcon className="h-4 w-4" />
-          </IconButton>
-
-          {user ? (
-            <ProfileMenu user={user} />
-          ) : (
-            <Button fullWidth variant="text">
-              <NavLink to={"/login"}>Log In</NavLink>
-            </Button>
-          )}
-        </div>
-      )}
 
     </Navbar>
 

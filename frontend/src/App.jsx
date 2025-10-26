@@ -8,6 +8,7 @@ import PublicRoute from "./components/PublicRoute.jsx";
 import ProctedRoute from "./components/ProctedRoute.jsx";
 import MyProfile from "./features/profile/MyProfile.jsx";
 import UpdateProfile from "./features/profile/UpdateProfile.jsx";
+import SearchPage from "./features/search/SearchPage.jsx";
 
 
 export default function App() {
@@ -33,6 +34,10 @@ export default function App() {
         {
           path:'profile-update/:id',
           element: <UpdateProfile/>
+        },
+        {
+          path:'search',
+          element: <SearchPage/>
         }
           ]
         },

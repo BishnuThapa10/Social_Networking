@@ -5,62 +5,66 @@ const postApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
 
     getPosts: builder.query({
-      query: () => ({
-        url:'/posts',
-        method:'GET'
+      query: ({ mine, authorId } = {}) => ({
+        url: '/posts',
+        params: {
+          ...(mine !== undefined && { mine }),
+          ...(authorId && { authorId })
+        },
+        method: 'GET'
       }),
       providesTags: ['Posts']
     }),
 
-     getPost: builder.query({
+    getPost: builder.query({
       query: (id) => ({
-        url:`/posts/${id}`,
-        method:'GET'
+        url: `/posts/${id}`,
+        method: 'GET'
       }),
       providesTags: ['Posts']
     }),
 
     createPost: builder.mutation({
-      query: ({formData}) => ({
+      query: ({ formData }) => ({
         url: '/posts',
         body: formData,
         // headers: {
         //   Authorization: token
         // },
-        method:'POST'
+        method: 'POST'
       }),
-      invalidatesTags: ['Posts','ID']
+      invalidatesTags: ['Posts', 'ID']
     }),
 
     OwnerPosts: builder.query({
       query: () => ({
-        url:'/posts',
-        params:{
+        url: '/posts',
+        params: {
           mine: true
         },
-        method:'GET'
+        method: 'GET'
       }),
       providesTags: ['Posts']
     }),
 
     updatePost: builder.mutation({
-      query: ({id, formData}) => ({
+      query: ({ id, formData }) => ({
         url: `/posts/${id}`,
         body: formData,
-        method:'PATCH'
+        method: 'PATCH'
       }),
-      invalidatesTags: ['Posts','ID']
+      invalidatesTags: ['Posts', 'ID']
     }),
 
     deletePost: builder.mutation({
       query: (id) => ({
         url: `/posts/${id}`,
-        method:'DELETE'
+        method: 'DELETE'
       }),
-      invalidatesTags: ['Posts','ID']
+      invalidatesTags: ['Posts', 'ID']
     }),
 
   })
 })
 
-export const {useGetPostsQuery, useCreatePostMutation, useOwnerPostsQuery, useGetPostQuery, useLazyGetPostQuery, useUpdatePostMutation, useDeletePostMutation} = postApi;
+export const { useGetPostsQuery, useCreatePostMutation, useOwnerPostsQuery, useGetPostQuery, useLazyGetPostQuery, useUpdatePostMutation, useDeletePostMutation } = postApi;

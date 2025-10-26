@@ -2,11 +2,11 @@ import React from 'react'
 import ProfileHeader from './ProfileHeader.jsx'
 import { Card, CardContent, CardHeader } from '../../components/ui/card.jsx'
 import PostList from '../post/PostList.jsx'
-import { useOwnerPostsQuery } from '../post/postApi.js';
+import { useGetPostsQuery} from '../post/postApi.js';
 import { useGetProfileQuery } from './profileApi.js';
 
 export default function MyProfile() {
-   const {isLoading: loadingPosts, error: PostsError, data: posts} = useOwnerPostsQuery(undefined, {
+   const {isLoading: loadingPosts, error: PostsError, data: posts} = useGetPostsQuery({ mine: true }, {
     refetchOnMountOrArgChange: true, // auto refetch on mount/sign-in
   });
    const {isLoading : loadingProfile, data: profile, error: profileError} = useGetProfileQuery();
