@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Ellipsis, X } from 'lucide-react'
 import EditAndDeletePost from './EditAndDeletePost.jsx'
+import Like from '../likeComment/Like.jsx'
 
 export default function PostList({ posts, isOwner}) {
   const [open, setOpen] = useState(false)
@@ -91,12 +92,12 @@ export default function PostList({ posts, isOwner}) {
 
             <div className="gap-4 flex items-center justify-end">
               <div className="space-x-1 flex items-center">
-                <i className="fa-regular fa-heart fa-md text-blue-gray-500" />
-                <span className="text-sm text-blue-gray-500 select-none">1</span>
+                <Like id={post._id} liked={post.liked}/>
+                <span className="text-sm text-blue-gray-500 select-none">{post.likesCount}</span>
               </div>
               <div className="space-x-1 flex items-center">
                 <i className="fa-regular fa-comment fa-md text-blue-gray-500" />
-                <span className="text-sm text-blue-gray-500 select-none">2</span>
+                <span className="text-sm text-blue-gray-500 select-none">{post.commentsCount}</span>
               </div>
             </div>
           </CardContent>

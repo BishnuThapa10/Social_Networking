@@ -13,7 +13,13 @@ const postApi = mainApi.injectEndpoints({
         },
         method: 'GET'
       }),
-      providesTags: ['Posts']
+      providesTags: (result) =>
+        result?.results
+          ? [
+            ...result.results.map(({ _id }) => ({ type: 'Posts', id: _id })),
+            { type: 'Posts', id: 'LIST' },
+          ]
+          : [{ type: 'Posts', id: 'LIST' }],
     }),
 
     getPost: builder.query({

@@ -12,7 +12,7 @@ export default function MyProfile() {
    const {isLoading : loadingProfile, data: profile, error: profileError} = useGetProfileQuery();
    if(loadingProfile) return <h1>Loading...</h1>
   if(profileError) return <h1 className='text-red-500'>{profileError.data.message}</h1>
-  const postCount =  posts?.results?.length || 0 ;
+  const postCount =  posts?.totalPosts || 0 ;
   const userProfile = {...profile, postCount}
   return (
     <div className='bg-gray-100 p-2 min-h-screen w-full space-y-2'>

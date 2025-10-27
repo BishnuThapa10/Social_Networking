@@ -2,7 +2,7 @@ import React from 'react'
 import { useGetUserQuery } from '../profile/profileApi.js'
 import { getAuthUser } from '../../lib/auth.js'
 import ProfileHeader from '../profile/ProfileHeader.jsx';
-import { useGetPostQuery, useGetPostsQuery } from '../post/postApi.js';
+import { useGetPostsQuery } from '../post/postApi.js';
 import { Card, CardContent, CardHeader } from '../../components/ui/card.jsx';
 import PostList from '../post/PostList.jsx';
 
@@ -19,9 +19,8 @@ export default function UserDetail({ userId }) {
   if (!userId) return <p className="mt-4 text-gray-500">No user selected</p>
   if (isLoading) return <p className="mt-4 text-gray-500">Loading user details...</p>
   if (isError) return <p className="mt-4 text-red-500">Error loading user details</p>
-  const postCount = posts?.results?.length || 0;
+  const postCount = posts?.totalPosts || 0;
   const userProfile = { ...user, postCount }
-  console.log(postsError);
   return (
     <div className='p-2 min-h-screen w-full space-y-2'>
       <ProfileHeader profile={userProfile} isOwner={auth.id == user._id ? true : false} />

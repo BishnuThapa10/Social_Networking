@@ -1,4 +1,4 @@
-import { BellIcon, ChevronDownIcon, MagnifyingGlassCircleIcon, MagnifyingGlassIcon, PowerIcon, UserCircleIcon } from '@heroicons/react/16/solid';
+import { BellIcon, ChevronDownIcon, MagnifyingGlassIcon, PowerIcon, UserCircleIcon } from '@heroicons/react/16/solid';
 import { Avatar, Button, IconButton, Menu, MenuHandler, MenuItem, MenuList, Navbar, Typography } from '@material-tailwind/react'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
