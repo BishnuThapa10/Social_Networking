@@ -55,6 +55,13 @@ export const getPosts = async (req, res) => {
         $addFields: {
           likesCount: { $size: { $ifNull: ["$likes", []] } },
           commentsCount: { $size: { $ifNull: ["$comments", []] } },
+          liked: {
+            $cond: {
+              if: { $in: [mongoose.Types.ObjectId.createFromHexString(req.userId), "$likes"] },
+              then: true,
+              else: false,
+            },
+          },
         },
       },
       { $sort: { createdAt: -1 } },
@@ -65,6 +72,7 @@ export const getPosts = async (req, res) => {
           image: 1,
           likesCount: 1,
           commentsCount: 1,
+          liked: 1,
           createdAt: 1,
           updatedAt: 1,
         },
@@ -84,8 +92,10 @@ export const getPosts = async (req, res) => {
     //   // .populate("comments.author", "username")
     //   .sort({ createdAt: -1 });
     // const results = await query;
-    res.status(200).json({ totalPosts,
-      results: populatedPosts, })
+    res.status(200).json({
+      totalPosts,
+      results: populatedPosts,
+    })
   } catch (err) {
     res.status(400).json({ message: err.message || err })
   }
