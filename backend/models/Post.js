@@ -5,7 +5,8 @@ import mongoose from "mongoose";
 const commentSchema = new mongoose.Schema({
       text: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
       },
       author:{
         type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +19,8 @@ const postSchema = new mongoose.Schema({
 
   content: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
   },
 
   author: {
@@ -48,6 +50,8 @@ const postSchema = new mongoose.Schema({
   comments: [commentSchema],
 
 }, {timestamps: true});
+
+postSchema.index({ createdAt: -1 });
 
 const Post = mongoose.model('Post', postSchema);
 export default Post;

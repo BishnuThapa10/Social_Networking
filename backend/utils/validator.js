@@ -5,7 +5,7 @@ import Joi from "joi";
 
 export const validatorJoi = createValidator({passError: true})
 
-const commentSchema = Joi.object({
+export const commentSchema = Joi.object({
   text: Joi.string().trim().required(),
   author: Joi.string().hex().length(24)
 });

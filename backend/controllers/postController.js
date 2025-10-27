@@ -10,15 +10,15 @@ export const createPost = async (req, res) => {
   try {
     const { content } = req.body;
     const author = req.userId;
-    let postData = {content, author};
+    let postData = { content, author };
 
     if (req.file) {
       uploadedImage = await upload("posts").uploadToCloudinary(req.file.buffer, req.file.originalname);
 
-        postData.image = {
-          url: uploadedImage.secure_url,
-          public_id: uploadedImage.public_id
-        };
+      postData.image = {
+        url: uploadedImage.secure_url,
+        public_id: uploadedImage.public_id
+      };
     }
 
     const post = new Post(postData);
@@ -32,28 +32,60 @@ export const createPost = async (req, res) => {
 
 export const getPosts = async (req, res) => {
   try {
-    const {mine, authorId} = req.query;
-    
+    const { mine, authorId } = req.query;
+
     let filter = {};
 
     //If ?mine=true → show logged-in user's posts
     if (mine === "true" && req.userId) {
-      filter.author = req.userId;
+      filter.author = mongoose.Types.ObjectId.createFromHexString(req.userId);
     }
     //Else if ?authorId=... → show posts by that author
     else if (authorId) {
       if (!mongoose.isValidObjectId(authorId)) {
         return res.status(400).json({ message: "Invalid author ID" });
       }
-      filter.author = authorId;
+      filter.author = mongoose.Types.ObjectId.createFromHexString(authorId);
     }
 
-    const query = Post.find(filter,"-likes -comments")
-      .populate("author", "username profilePicture")
-      // .populate("comments.author", "username")
-      .sort({ createdAt: -1 });
-    const results = await query;
-    res.status(200).json({ results })
+    // Aggregate posts with like/comment counts
+    const posts = await Post.aggregate([
+      { $match: filter },
+      {
+        $addFields: {
+          likesCount: { $size: { $ifNull: ["$likes", []] } },
+          commentsCount: { $size: { $ifNull: ["$comments", []] } },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      {
+        $project: {
+          content: 1,
+          author: 1,
+          image: 1,
+          likesCount: 1,
+          commentsCount: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    ]);
+
+    // Populate author info
+    const populatedPosts = await Post.populate(posts, {
+      path: "author",
+      select: "username profilePicture",
+    });
+
+    const totalPosts = await Post.countDocuments(filter);
+
+    // const query = Post.find(filter, "-likes -comments")
+    //   .populate("author", "username profilePicture")
+    //   // .populate("comments.author", "username")
+    //   .sort({ createdAt: -1 });
+    // const results = await query;
+    res.status(200).json({ totalPosts,
+      results: populatedPosts, })
   } catch (err) {
     res.status(400).json({ message: err.message || err })
   }
@@ -63,7 +95,7 @@ export const getPost = async (req, res) => {
   const { id } = req.params;
   try {
     if (!mongoose.isValidObjectId(id)) return res.status(400).json({ message: 'Invalid Id' })
-    const result = await Post.findById(id).populate("author", "username profilePicture")
+    const result = await Post.findById(id, "-likes -comments").populate("author", "username profilePicture")
       .sort({ createdAt: -1 });;
     if (!result) return res.status(404).json({ message: 'Data not found' })
     return res.status(200).json({ result })
@@ -88,21 +120,21 @@ export const updatePost = async (req, res) => {
 
     let oldImage = null;
 
-    if(req.file){
-       uploadedImage = await upload("posts").uploadToCloudinary(req.file.buffer, req.file.originalname);
+    if (req.file) {
+      uploadedImage = await upload("posts").uploadToCloudinary(req.file.buffer, req.file.originalname);
 
-       oldImage = post.image?.public_id;
+      oldImage = post.image?.public_id;
 
-       post.image = {
+      post.image = {
         url: uploadedImage.secure_url,
         public_id: uploadedImage.public_id
-       };
+      };
     }
 
     post.content = req.body?.content ?? post.content;
 
     await post.save();
-    if(req.file && oldImage){
+    if (req.file && oldImage) {
       await cloudinary.uploader.destroy(oldImage);
     }
 
@@ -125,14 +157,14 @@ export const removePost = async (req, res) => {
     if (req.userId !== post.author.toString()) {
       return res.status(403).json({ message: "Forbidden: you can only delete your own post" })
     }
-    if(post.image?.public_id){
+    if (post.image?.public_id) {
       try {
         await cloudinary.uploader.destroy(post.image?.public_id);
       } catch (cloudErr) {
         console.error('Cloudinary deletion error:', cloudErr);
         return res.status(500).json({ message: 'Failed to delete image from storage' });
       }
-      
+
     }
     await post.deleteOne();
     res.status(200).json({ message: 'Deleted sucessfully' })
