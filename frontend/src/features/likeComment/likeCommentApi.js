@@ -15,7 +15,31 @@ const likeCommentApi = mainApi.injectEndpoints({
       ],
     }),
 
+    commentPost: builder.mutation({
+      query: ({postId, formData}) => ({
+        url: `/posts/${postId}/comments`,
+        body: formData,
+        method: 'POST'
+      }),
+      invalidatesTags: (result, error,{postId}) => [
+        { type: 'Posts', id: postId },
+        { type: 'Posts', id: 'LIST' },
+        { type: "Comments", id: postId },
+      ],
+    }),
+
+    getcomments: builder.query({
+      query: (postId) => ({
+        url: `/posts/${postId}/comments`,
+        method: 'GET'
+      }),
+      providesTags: (result, error, postId) => [
+        { type: "Comments", id: postId },
+        { type: "Posts", id: postId },
+      ],
+    }),
+
   })
 })
 
-export const { useLikePostMutation } = likeCommentApi;
+export const { useLikePostMutation, useCommentPostMutation, useGetcommentsQuery } = likeCommentApi;

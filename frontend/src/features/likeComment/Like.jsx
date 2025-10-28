@@ -21,17 +21,16 @@ export default function Like({ id, liked }) {
       <Button
         variant="ghost"
         size="icon"
-        className="transition disabled:opacity-50 hover:bg-transparent"
+        className="transition disabled:opacity-50 hover:bg-transparent cursor-pointer"
         onClick={handelLike}
         disabled={isLiking}
       >
         {liked ? (
-          <SolidHeart className="w-6 h-6 text-red-500" />
+          <SolidHeart className="w-8 h-8 text-red-500" />
         ) : (
-          <OutlineHeart className="w-6 h-6 text-red-500" />
+          <OutlineHeart className="w-8 h-8 text-red-500" />
         )}
       </Button>
-      {/* <i className="fa-regular fa-heart fa-md text-blue-gray-500" /> */}
     </div>
   )
 }

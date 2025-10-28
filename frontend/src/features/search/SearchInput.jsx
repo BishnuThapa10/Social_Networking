@@ -43,7 +43,6 @@ export default function SearchInput({ onSelectUser }) {
         onChange={(e) => setTerm(e.target.value)}
         placeholder="Search users..."
         className="flex-1 rounded-full bg-gray-50 border-gray-200"
-        // className="border border-gray-500 h-8 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none"
       />
 
       {/* Dropdown search results */}
