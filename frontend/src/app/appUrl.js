@@ -1,2 +1,2 @@
 
-export const baseUrl = 'http://192.168.10.107:5000';
+export const baseUrl = 'https://social-networking-j8qj.onrender.com';
