@@ -18,7 +18,7 @@ const validationSchema = Yup.object({
 
 export default function Comment({ id }) {
   const [open, setOpen] = useState(false);
-  const { data, isLoading, isError, isFetching } = useGetcommentsQuery(id);
+  const { data, isLoading, isError, isFetching } = useGetcommentsQuery(id, { skip: !open });
   const [addComment, { isLoading: isAdding }] = useCommentPostMutation();
   return (
     <div>
@@ -49,14 +49,14 @@ export default function Comment({ id }) {
               <div className="flex flex-col items-center justify-center py-10 text-red-500">
                 <p>Failed to load comments.</p>
               </div>
-            ) : data.comments.length === 0 ? (
+            ) : !data?.comments?.length? (
               <p className="text-center text-sm text-muted-foreground py-8">
                 No comments yet.
               </p>
             ) : (
               <div className="space-y-2">
-                {data.comments
-                  .slice() // copy array to avoid mutating original
+                {data?.comments
+                  ?.slice() // copy array to avoid mutating original
                   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                   .map((comment) => (
 
