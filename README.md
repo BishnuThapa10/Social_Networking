@@ -9,6 +9,11 @@
 
 Check out the live application here: [Social Networking Live](https://social-networking-five.vercel.app/)
 
+The application is deployed online:  
+
+- **Frontend:** [Vercel] 
+- **Backend:** [Render] 
+
 ---
 
 ## ✨ Features
